@@ -141,14 +141,14 @@ func Do(r *Request, v interface{}) error {
 func unmarshal(res *http.Response, v interface{}) error {
 	if res.StatusCode != http.StatusOK {
 		e := new(Error)
-		err := xml.Unmarshal(&logReader{res.Body}, e)
+		err := xml.Unmarshal(res.Body, e)
 		if err != nil {
 			return err
 		}
 		return e
 	}
 
-	return xml.Unmarshal(&logReader{res.Body}, v)
+	return xml.Unmarshal(res.Body, v)
 }
 
 // Utils
