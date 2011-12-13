@@ -59,6 +59,19 @@
 
 You can change the API and Credentials, used by the Sugar commands, by updating `aws.TemplateRequest`.
 
+## Running tests
+
+	$ cd /path/to/repo
+	$ git config add aws.key <aws-key>
+	$ git config add aws.secret <aws-secret>
+	$ ./development.sh gotest // Does NOT create resources
+
+or
+
+	# Most *nix systems will not log a command with spaces in front in your history
+	# BEWARE if yours does not
+	$ <space><space> AWS_SECRET_ACCESS_KEY=<secret> AWS_ACCESS_KEY_ID=<key> gotest
+
 ## LICENCES
 
 Copyright (C) 2011 by Blake Mizerany (@bmizerany)
