@@ -61,6 +61,8 @@ You can change the API and Credentials, used by the Sugar commands, by updating 
 
 ## Running tests
 
+NOTE: Most Unix/Linux systems will not log commands to history if they start with spaces; BEWARE if yours does not.
+
 	$ cd /path/to/repo
 	$ git config add aws.key <aws-key>
 	$ git config add aws.secret <aws-secret>
@@ -68,8 +70,6 @@ You can change the API and Credentials, used by the Sugar commands, by updating 
 
 or
 
-	# Most *nix systems will not log a command with spaces in front in your history
-	# BEWARE if yours does not
 	$ <space><space> AWS_SECRET_ACCESS_KEY=<secret> AWS_ACCESS_KEY_ID=<key> gotest
 
 ## LICENCES
