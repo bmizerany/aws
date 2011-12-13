@@ -95,8 +95,6 @@ func (r *Request) Encode() string {
 
 	r.Add("Signature", sig)
 
-	fmt.Printf("%v\n", r.Params.Encode())
-
 	return r.Params.Encode()
 }
 
