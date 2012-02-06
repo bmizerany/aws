@@ -3,10 +3,12 @@ package aws
 import (
 	"bytes"
 	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -88,7 +90,7 @@ func (r *Request) Encode() string {
 		r.Params.Encode(),
 	}, "\n")
 
-	h := hmac.NewSHA256([]byte(r.Secret))
+	h := hmac.New(sha256.New, []byte(r.Secret))
 	h.Write([]byte(data))
 
 	sig := base64.StdEncoding.EncodeToString(h.Sum([]byte{}))
@@ -105,7 +107,7 @@ type Header struct {
 type Error struct {
 	Header
 	Errors []struct {
-		Code string
+		Code    string
 		Message string
 	} `xml:"Errors>Error"`
 }
@@ -124,9 +126,12 @@ func (err *Error) Error() string {
 }
 
 func Do(r *Request, v interface{}) error {
+	// charset=utf-8 is required by the SDB endpoint
+	// otherwise it fails signature checking.
+	// ec2 endpoint seems to be fine with it either way
 	res, err := http.Post(
 		"https://"+r.Host,
-		"application/x-www-form-urlencoded",
+		"application/x-www-form-urlencoded; charset=utf-8",
 		bytes.NewBufferString(r.Encode()),
 	)
 	if err != nil {
@@ -139,14 +144,23 @@ func Do(r *Request, v interface{}) error {
 func unmarshal(res *http.Response, v interface{}) error {
 	if res.StatusCode != http.StatusOK {
 		e := new(Error)
-		err := xml.Unmarshal(res.Body, e)
+		b, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+
+		err = xml.Unmarshal(b, e)
 		if err != nil {
 			return err
 		}
 		return e
 	}
 
-	return xml.Unmarshal(res.Body, v)
+	b, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	return xml.Unmarshal(b, v)
 }
 
 // Utils
@@ -170,14 +184,14 @@ type DescribeInstancesResponse struct {
 
 type Reservation struct {
 	ReservationId string
-	Instances []Instance `xml:"instancesSet>item"`
+	Instances     []Instance `xml:"instancesSet>item"`
 }
 
 type Instance struct {
 	InstanceId string
-	StateName string `xml:"instanceState>name"`
-	DnsName string
-	IpAddress string
+	StateName  string `xml:"instanceState>name"`
+	DnsName    string
+	IpAddress  string
 }
 
 func DescribeInstances() (*DescribeInstancesResponse, error) {
