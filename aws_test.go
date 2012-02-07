@@ -1,10 +1,10 @@
 package aws
 
 import (
-	"encoding/xml"
 	"github.com/bmizerany/assert"
-	"strings"
 	"testing"
+	"strings"
+	"encoding/xml"
 )
 
 func TestDoError(t *testing.T) {
@@ -31,13 +31,13 @@ func TestUnmarshalError(t *testing.T) {
 	`)
 
 	type Error struct {
-		Code    string
+		Code string
 		Message string
 	}
 
 	type Response struct {
 		RequestId string
-		Errors    []Error `xml:"Errors>Error"`
+		Errors []Error `xml:"Errors>Error"`
 	}
 
 	got := new(Response)
