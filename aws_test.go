@@ -3,7 +3,6 @@ package aws
 import (
 	"encoding/xml"
 	"github.com/bmizerany/assert"
-	"strings"
 	"testing"
 )
 
@@ -17,7 +16,7 @@ func TestDoError(t *testing.T) {
 }
 
 func TestUnmarshalError(t *testing.T) {
-	body := strings.NewReader(`
+	body := []byte(`
 		<?xml version="1.0" encoding="UTF-8"?>
 		<Response>
 			<Errors>
