@@ -3,10 +3,12 @@ package aws
 import (
 	"bytes"
 	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -88,7 +90,7 @@ func (r *Request) Encode() string {
 		r.Params.Encode(),
 	}, "\n")
 
-	h := hmac.NewSHA256([]byte(r.Secret))
+	h := hmac.New(sha256.New, []byte(r.Secret))
 	h.Write([]byte(data))
 
 	sig := base64.StdEncoding.EncodeToString(h.Sum([]byte{}))
@@ -139,14 +141,23 @@ func Do(r *Request, v interface{}) error {
 func unmarshal(res *http.Response, v interface{}) error {
 	if res.StatusCode != http.StatusOK {
 		e := new(Error)
-		err := xml.Unmarshal(res.Body, e)
+		b, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+
+		err = xml.Unmarshal(b, e)
 		if err != nil {
 			return err
 		}
 		return e
 	}
 
-	return xml.Unmarshal(res.Body, v)
+	b, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	return xml.Unmarshal(b, v)
 }
 
 // Utils
