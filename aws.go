@@ -105,7 +105,7 @@ type Header struct {
 type Error struct {
 	Header
 	Errors []struct {
-		Code string
+		Code    string
 		Message string
 	} `xml:"Errors>Error"`
 }
@@ -170,14 +170,14 @@ type DescribeInstancesResponse struct {
 
 type Reservation struct {
 	ReservationId string
-	Instances []Instance `xml:"instancesSet>item"`
+	Instances     []Instance `xml:"instancesSet>item"`
 }
 
 type Instance struct {
 	InstanceId string
-	StateName string `xml:"instanceState>name"`
-	DnsName string
-	IpAddress string
+	StateName  string `xml:"instanceState>name"`
+	DnsName    string
+	IpAddress  string
 }
 
 func DescribeInstances() (*DescribeInstancesResponse, error) {
