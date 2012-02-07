@@ -126,9 +126,12 @@ func (err *Error) Error() string {
 }
 
 func Do(r *Request, v interface{}) error {
+	// charset=utf-8 is required by the SDB endpoint
+	// otherwise it fails signature checking.
+	// ec2 endpoint seems to be fine with it either way
 	res, err := http.Post(
 		"https://"+r.Host,
-		"application/x-www-form-urlencoded",
+		"application/x-www-form-urlencoded; charset=utf-8",
 		bytes.NewBufferString(r.Encode()),
 	)
 	if err != nil {
