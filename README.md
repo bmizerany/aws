@@ -2,7 +2,7 @@
 
 # Install
 
-	$ goinstall github.com/bmizerany/aws.go
+	$ go get github.com/bmizerany/aws.go
 
 ## Use
 
@@ -12,7 +12,7 @@
 	package main
 
 	import (
-		"github.com/bmizerany/aws.go"
+		"github.com/bmizerany/aws"
 		"log"
 	)
 
