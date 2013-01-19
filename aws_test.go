@@ -2,7 +2,7 @@ package aws
 
 import (
 	"encoding/xml"
-	"github.com/bmizerany/assert"
+	"fmt"
 	"testing"
 )
 
@@ -35,7 +35,7 @@ func TestUnmarshalError(t *testing.T) {
 	}
 
 	type Response struct {
-		RequestId string
+		RequestId string  `xml:"RequestID"`
 		Errors    []Error `xml:"Errors>Error"`
 	}
 
@@ -52,5 +52,7 @@ func TestUnmarshalError(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, exp, got)
+	if fmt.Sprintf("%#v", exp) != fmt.Sprintf("%#v", got) {
+		t.Fatalf("Expected %#v, but got %#v", exp, got)
+	}
 }
